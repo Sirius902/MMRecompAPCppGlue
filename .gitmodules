@@ -1,6 +1,6 @@
 [submodule "lib/APCpp"]
 	path = lib/APCpp
-	url = https://github.com/RecompRando/APCpp.git
+	url = https://github.com/Sirius902/APCpp.git
 	branch = main
 [submodule "Archipelago-MM"]
 	path = archipelago
