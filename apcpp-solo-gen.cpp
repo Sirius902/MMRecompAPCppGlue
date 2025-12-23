@@ -134,6 +134,10 @@ bool sologen::generate(const std::filesystem::path& yaml_dir, const std::filesys
     // debug print sys.path
     PyRun_SimpleString("print(sys.path)");
 
+    // operate in yaml dir
+    auto chdir_cmd = std::string("import os; os.chdir('") + path_to_string_utf8(yaml_dir) + "')";
+    PyRun_SimpleString(chdir_cmd.c_str());
+
     // Create a Python list to simulate sys.argv
     std::vector<std::string> args = {
         "MMGenerate.py",  // argv[0] is typically the script name

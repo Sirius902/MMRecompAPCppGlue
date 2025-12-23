@@ -392,19 +392,22 @@ extern "C"
     
     DLLEXPORT void rando_init(uint8_t* rdram, recomp_context* ctx)
     {
+        std::string savePath;
         std::string address;
         std::string playerName;
         std::string password;
         
-        PTR(char) address_ptr = _arg<0, PTR(char)>(rdram, ctx);
-        PTR(char) player_name_ptr = _arg<1, PTR(char)>(rdram, ctx);
-        PTR(char) password_ptr = _arg<2, PTR(char)>(rdram, ctx);
+        PTR(char) save_path_ptr = _arg<0, PTR(char)>(rdram, ctx);
+        PTR(char) address_ptr = _arg<1, PTR(char)>(rdram, ctx);
+        PTR(char) player_name_ptr = _arg<2, PTR(char)>(rdram, ctx);
+        PTR(char) password_ptr = _arg<3, PTR(char)>(rdram, ctx);
         
+        getStr(rdram, save_path_ptr, savePath);
         getStr(rdram, address_ptr, address);
         getStr(rdram, player_name_ptr, playerName);
         getStr(rdram, password_ptr, password);
         
-        state = AP_New();
+        state = AP_New(savePath.c_str());
         AP_Init(state, address.c_str(), "Majora's Mask Recompiled", playerName.c_str(), password.c_str());
 
         bool success = rando_init_common();
@@ -419,7 +422,12 @@ extern "C"
     
     DLLEXPORT void rando_init_solo(uint8_t* rdram, recomp_context* ctx)
     {
-        u32 selected_seed = _arg<0, u32>(rdram, ctx);
+        std::string savePath;
+
+        PTR(char) save_path_ptr = _arg<0, PTR(char)>(rdram, ctx);
+        u32 selected_seed = _arg<1, u32>(rdram, ctx);
+
+        getStr(rdram, save_path_ptr, savePath);
         
         if (selected_seed >= solo_state.seeds.size())
         {
@@ -427,7 +435,7 @@ extern "C"
             return;
         }
         
-        state = AP_New();
+        state = AP_New(savePath.c_str());
         const std::u8string& seed = solo_state.seeds[selected_seed].seed_name;
         std::filesystem::path gen_file = solo_state.seed_folder / (std::u8string{ gen_file_prefix } + seed + std::u8string{ gen_file_suffix });
         AP_InitSolo(state, reinterpret_cast<const char*>(gen_file.u8string().c_str()), reinterpret_cast<const char*>(seed.c_str()));
